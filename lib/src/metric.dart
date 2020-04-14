@@ -1,7 +1,12 @@
-import 'package:http/http.dart' as http;
+import 'dart:io';
 import 'dart:convert';
 
-String url="https://192.168.85.215:443/";
+String apiHost="192.168.85.215";
+String url="https://$apiHost:443/";
+
+bool _certificateCheck(X509Certificate cert, String host, int port) {
+  return host==apiHost;
+}
 
 class Metric {
   String id;
@@ -12,16 +17,22 @@ class Metric {
     value=0;
   }
 
-  void update() async {
-    //String post=url+"1/sensor/$id/measure/instant";
-    String post=url+"1/sensor/144f7484-7446-4e8f-b58e-c25221904dea/measure/instant";
+  update() async {
+    HttpClient client = new HttpClient()
+      ..badCertificateCallback = (_certificateCheck);
 
-    var response=await http.get(Uri.encodeFull(post));
+    String post=url+"api/v1/sensor/$id/measure/instant";
+
+    var request=await client.getUrl(Uri.parse(post));
+    var response=await request.close();
+    String responseBody = await response.transform(utf8.decoder).join();
+
     if (response.statusCode>=200 && response.statusCode<=400) {
-      var dict=jsonDecode(response.body);
-      //TODO parse values from response
-      print(dict);
+      var dict=jsonDecode(responseBody);
+      value=dict["values"][0]["value"];
     }
     else print("Communications Error: ${response.statusCode}");
+
+    client.close();
   }
 }

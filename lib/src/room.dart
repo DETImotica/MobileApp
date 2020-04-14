@@ -11,7 +11,6 @@ class Room {
   Room(Map<String,String> sensorIDs, this.dept, this.floor, this.num) {
     _metrics=new Map();
     for (String metric in sensorIDs.keys) _metrics[metric]=new Metric(sensorIDs[metric],metric);
-    //update();
   }
 
   bool hasMetric(String metric) => _metrics.containsKey(metric);
@@ -22,8 +21,11 @@ class Room {
 
   Iterable<String> getMetrics() => _metrics.keys;
 
-  void update() {
-    for (String metric in _metrics.keys) _metrics[metric].update();
+  update() async {
+    for (String metric in _metrics.keys) {
+      await _metrics[metric].update();
+      print(getValue(metric));
+    }
   }
 
 }

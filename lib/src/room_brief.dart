@@ -10,8 +10,7 @@ class RoomBr {
   Room roomInfo() {
     return Room(
       {
-        "temp":"ID1",
-        "humidity":"ID2",
+        "luminosidade":"144f7484-7446-4e8f-b58e-c25221904dea",
       },
       dept,floor,num
     );

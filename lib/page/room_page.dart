@@ -17,6 +17,12 @@ class _RoomPageState extends State<RoomPage> {
 
   @override
   Widget build(BuildContext context) {
+    _values() async {
+      await info.update();
+      setState(() {});
+    }
+    _values();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Sala ${info.dept}.${info.floor}.${info.num}"),
@@ -54,9 +60,11 @@ class _RoomPageState extends State<RoomPage> {
     List<Widget> sensors=[];
 
     for (String metric in info.getMetrics()) {
-      sensors.add(Text(metric+": ${info.getValue(metric)}"));
+      sensors.add(Text(
+        metric+": ${info.getValue(metric)}",
+        style: TextStyle(fontSize: 24),
+      ));
     }
-    for (var i=0;i<50;i++) sensors.add(Text("Hi"));
 
     return sensors;
   }
