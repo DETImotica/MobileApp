@@ -33,7 +33,10 @@ class RoomListPage extends StatelessWidget {
       list.add(Container(
         padding: EdgeInsets.all(8),
         child: FlatButton(
-          child: Text("${room.dept}.${room.floor}.${room.num}"),
+          child: Align(
+            child: Text("${room.dept}.${room.floor}.${room.num}"),
+            alignment: Alignment.centerLeft,
+          ),
           onPressed: () {
             Navigator.push(context,MaterialPageRoute(builder: (context) => RoomPage(room.roomInfo())));
           },
