@@ -1,12 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
-String apiHost="192.168.85.215";
-String url="https://$apiHost:443/";
-
-bool _certificateCheck(X509Certificate cert, String host, int port) {
-  return host==apiHost;
-}
+import 'package:deti_motica_app/api.dart';
 
 class Metric {
   String id;
@@ -19,7 +14,7 @@ class Metric {
 
   update() async {
     HttpClient client = new HttpClient()
-      ..badCertificateCallback = (_certificateCheck);
+      ..badCertificateCallback = (certificateCheck);
 
     String post=url+"api/v1/sensor/$id/measure/instant";
 

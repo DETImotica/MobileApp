@@ -24,7 +24,6 @@ class Room {
   update() async {
     for (String metric in _metrics.keys) {
       await _metrics[metric].update();
-      print(getValue(metric));
     }
   }
 

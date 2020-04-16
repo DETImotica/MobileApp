@@ -18,7 +18,7 @@ class _RoomPageState extends State<RoomPage> {
   @override
   Widget build(BuildContext context) {
     _values() async {
-      await info.update();
+      //await info.update();
       setState(() {});
     }
     _values();
