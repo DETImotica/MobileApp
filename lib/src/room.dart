@@ -1,4 +1,5 @@
 import "package:deti_motica_app/src/metric.dart";
+import 'package:flutter/material.dart';
 
 class Room {
 
@@ -16,6 +17,12 @@ class Room {
   bool hasMetric(String metric) => _metrics.containsKey(metric);
 
   dynamic getValue(String metric) => _metrics[metric].value;
+
+  dynamic getTime(String metric) => _metrics[metric].time;
+
+  String getIconPath(String metric) => _metrics[metric].iconPath;
+
+  Color getColor (String metric) => _metrics[metric].color;
 
   int getNumSensors() => _metrics.length;
 

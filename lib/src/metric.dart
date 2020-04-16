@@ -1,15 +1,24 @@
 import 'dart:io';
 import 'dart:convert';
-
+import 'package:deti_motica_app/src/metric_icon.dart';
 import 'package:deti_motica_app/api.dart';
+import 'package:flutter/material.dart';
 
 class Metric {
   String id;
   dynamic value;
+  dynamic time;
   String type;
+  String iconPath;
+  Color color;
+
+  var iconData = MetricIcon.getData;
 
   Metric(this.id,this.type) {
     value=0;
+    time= "Invalid Date";
+    iconPath= iconData[this.type]['path'];
+    color= iconData[this.type]['color'];
   }
 
   update() async {
@@ -21,10 +30,11 @@ class Metric {
     var request=await client.getUrl(Uri.parse(post));
     var response=await request.close();
     String responseBody = await response.transform(utf8.decoder).join();
-
+    print("Nice");
     if (response.statusCode>=200 && response.statusCode<=400) {
       var dict=jsonDecode(responseBody);
       value=dict["values"][0]["value"];
+      time=dict["values"][0]["time"];
     }
     else print("Communications Error: ${response.statusCode}");
 
