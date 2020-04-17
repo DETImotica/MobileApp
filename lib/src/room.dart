@@ -18,11 +18,19 @@ class Room {
 
   dynamic getValue(String metric) => _metrics[metric].value;
 
+  dynamic getDate(String metric) => _metrics[metric].date;
+
   dynamic getTime(String metric) => _metrics[metric].time;
 
   String getIconPath(String metric) => _metrics[metric].iconPath;
 
   Color getColor (String metric) => _metrics[metric].color;
+
+  List<dynamic> getPastValues (String metric) => _metrics[metric].pastValues;
+
+  dynamic getGain (String metric) => _metrics[metric].gain;
+
+  dynamic getGainPercentage (String metric) => _metrics[metric].gainPercentage;
 
   int getNumSensors() => _metrics.length;
 

@@ -2,6 +2,7 @@ import 'package:deti_motica_app/src/metric_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:deti_motica_app/src/import.dart';
 import 'package:typicons_flutter/typicons_flutter.dart';
+import 'package:flutter_sparkline/flutter_sparkline.dart';
 
 Room info;
 
@@ -94,11 +95,11 @@ class _RoomPageState extends State<RoomPage> {
                                   ),
                                   _metricNameSymbol(metric),
                                   Spacer(),
-                                  _sensorChange(),
+                                  _sensorChange(metric),
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  _changeIcon(),
+                                  _changeIcon(metric),
                                   SizedBox(
                                     width: 20,
                                   )
@@ -106,7 +107,11 @@ class _RoomPageState extends State<RoomPage> {
                               ),
                               Row(
                                 children: <Widget>[
-                                  _sensorValueData(metric)
+                                  _sensorValueData(metric),
+                                  SizedBox(
+                                    width: 100,
+                                  ),
+                                  _changeGraph(metric)
                                 ],
                               )
                             ],
@@ -152,19 +157,23 @@ class _RoomPageState extends State<RoomPage> {
       ),
     );
   }
-  Widget _sensorChange() {
+  Widget _sensorChange(metric) {
+    double gain= info.getGain(metric).toDouble();
+    double gainPercentage= info.getGainPercentage(metric).toDouble() * 100;
+    String gainStr = (gain < 0) ?gain.toStringAsFixed(2) : "+"+gain.toStringAsFixed(2);
+    String gainPercentageStr = (gainPercentage < 0) ?gainPercentage.toStringAsFixed(2) : "+"+gainPercentage.toStringAsFixed(2);
     return Align(
       alignment: Alignment.topRight,
       child: RichText(
         text: TextSpan(
-          text: '+0.4%',
+          text: '$gainPercentageStr%',
           style: TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.green, fontSize: 20),
+              fontWeight: FontWeight.bold, color: (gainPercentageStr.contains('-') ? Colors.red : Colors.green), fontSize: 20),
           children: <TextSpan>[
             TextSpan(
-                text: '\n+0.8',
+                text: '\n$gainStr',
                 style: TextStyle(
-                  color: ('+0.4%'.contains('-') ? Colors.red : Colors.green),
+                  color: (gainStr.contains('-') ? Colors.red : Colors.green),
                   fontSize: 15,
                   fontWeight: FontWeight.bold)),
           ],
@@ -172,10 +181,12 @@ class _RoomPageState extends State<RoomPage> {
       ),
     );
   }
-  Widget _changeIcon() {
+  Widget _changeIcon(metric) {
+    double gainPercentage= info.getGainPercentage(metric).toDouble() * 100;
+    String gainPercentageStr = (gainPercentage < 0) ?gainPercentage.toStringAsFixed(2) : "+"+gainPercentage.toStringAsFixed(2);
     return Align(
         alignment: Alignment.topRight,
-        child: '+0.4%'.contains('-')
+        child: gainPercentageStr.contains('-')
         ? Icon(
       Typicons.arrow_sorted_down,
       color: Colors.red,
@@ -210,10 +221,36 @@ class _RoomPageState extends State<RoomPage> {
                           fontStyle: FontStyle.italic,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text: '\n${info.getDate(metric)}',
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _changeGraph (metric){
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: new Container(
+        width: 120.0,
+        height: 80.0,
+        child: new Sparkline(
+          data: info.getPastValues(metric).map((s) => s as double).toList(),
+          lineWidth: 5.0,
+          lineGradient: new LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [info.getColor(metric), Colors.grey],
+          ),
         ),
       ),
     );
