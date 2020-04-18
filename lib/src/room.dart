@@ -1,4 +1,5 @@
 import "package:deti_motica_app/src/metric.dart";
+import 'package:deti_motica_app/src/sensor_brief.dart';
 import 'package:flutter/material.dart';
 
 class Room {
@@ -9,9 +10,9 @@ class Room {
   int num;
 
 
-  Room(Map<String,String> sensorIDs, this.dept, this.floor, this.num) {
+  Room(Map<String,SensorBr> sensors, this.dept, this.floor, this.num) {
     _metrics=new Map();
-    for (String metric in sensorIDs.keys) _metrics[metric]=new Metric(sensorIDs[metric],metric);
+    for (String metric in sensors.keys) _metrics[sensors[metric].type]=sensors[metric].metricInfo();
   }
 
   bool hasMetric(String metric) => _metrics.containsKey(metric);
@@ -36,10 +37,11 @@ class Room {
 
   Iterable<String> getMetrics() => _metrics.keys;
 
-  update() async {
+  Future<Room> update() async {
     for (String metric in _metrics.keys) {
       await _metrics[metric].update();
     }
+    return this;
   }
 
 }

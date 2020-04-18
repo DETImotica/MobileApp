@@ -1,19 +1,34 @@
 import 'package:deti_motica_app/src/import.dart';
+import 'package:deti_motica_app/src/sensor_brief.dart';
 
 class RoomBr {
   int dept;
   int floor;
   int num;
+  String desciption;
 
-  RoomBr(this.dept, this.floor, this.num);
+  Map<String,SensorBr> sensors;
+
+  RoomBr(this.dept, this.floor, this.num, this.desciption) {
+    sensors=Map();
+  }
+
+  RoomBr.id(String id, this.desciption) {
+    var split=id.split(".");
+    if (split.length==3) {
+      try {
+        dept = int.parse(split[0]);
+        floor = int.parse(split[1]);
+        num = int.parse(split[2]);
+      }
+      on FormatException {
+        dept=floor=num=0;
+      }
+    }
+    sensors=Map();
+  }
 
   Room roomInfo() {
-    return Room(
-      {
-        "luminosidade":"144f7484-7446-4e8f-b58e-c25221904dea",
-        "temperatura":"55fbf7d0-cc47-4642-9290-a493d383ad8c",
-      },
-      dept,floor,num
-    );
+    return Room(sensors,dept,floor,num);
   }
 }

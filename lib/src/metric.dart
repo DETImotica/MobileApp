@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 
 class Metric {
   String id;
+  String description;
   dynamic value;
   dynamic date;
   dynamic time;
   String type;
+  String unit;
   String iconPath;
   Color color;
   dynamic pastValues;
@@ -18,14 +20,15 @@ class Metric {
 
   var iconData = MetricIcon.getData;
 
-  Metric(this.id,this.type) {
+  Metric(this.id,this.type,[this.description,this.unit]) {
     value=0;
     date= "Invalid Date";
     time= "Invalid Hour";
     iconPath= iconData[this.type]['path'];
     color= iconData[this.type]['color'];
     pastValues= [0.0,1.0,2.0,3.0,4.0,5.0];
-    gain= 0;
+    gain=0;
+    gainPercentage=0;
   }
 
   update() async {
@@ -38,7 +41,7 @@ class Metric {
     var request=await client.getUrl(Uri.parse(post));
     var response=await request.close();
     String responseBody = await response.transform(utf8.decoder).join();
-    if (response.statusCode>=200 && response.statusCode<=400) {
+    if (response.statusCode>=200 && response.statusCode<400) {
       var dict=jsonDecode(responseBody);
       var data= [];
       for (var tuple in dict["values"]){

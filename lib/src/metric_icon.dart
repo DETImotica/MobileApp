@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class MetricIcon{
@@ -12,6 +10,6 @@ class MetricIcon{
     'Humidade': {'path': 'assets/images/humidity.png', 'color': Colors.blue},
     'Dióxido de Carbono': {'path': 'assets/images/co2.png', 'color': Colors.blueGrey},
     'Qualidade do Ar': {'path': 'assets/images/iaq.png', 'color': Colors.blue},
-    'Bluetooth': {'path': 'assets/images/iaq.png', 'color': Colors.blue}
+    'Bluetooth': {'path': 'assets/images/bluetooth.png', 'color': Colors.blue}
   };
 }

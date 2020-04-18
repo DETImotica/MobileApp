@@ -1,68 +1,60 @@
-import 'package:deti_motica_app/src/metric_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:deti_motica_app/src/import.dart';
 import 'package:typicons_flutter/typicons_flutter.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
-
-Room info;
+import 'dart:async';
 
 class RoomPage extends StatefulWidget {
+  final Room room;
 
-  RoomPage(Room room) {
-    info=room;
-  }
+  RoomPage(this.room);
 
   @override
-  State<StatefulWidget> createState() => _RoomPageState();
+  State<StatefulWidget> createState() => _RoomPageState(room);
 }
 
 class _RoomPageState extends State<RoomPage> {
+  Room room;
+  Future<Room> info;
+  Timer timer;
+
+  _RoomPageState(this.room) {
+    super.initState();
+    info=room.update();
+    timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState((){}));
+  }
 
   @override
   Widget build(BuildContext context) {
-    _values() async {
-      await info.update();
-      setState(() {});
-    }
-    _values();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sala ${info.dept}.${info.floor}.${info.num}"),
+        title: Text("Sala ${room.dept}.${room.floor}.${room.num}"),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: _buildSensorData()
-          /*<Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height*0.3,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text("Número estimado de ocupantes"),
-                  Text(
-                    info.hasMetric("ocupacao")?info.getValue("ocupacao"):"N/A",
-                    style: TextStyle(backgroundColor: Colors.blueGrey)
-                  ),
-                ],
-              ),
-            ),
-            ExpansionTile(
-              title: Text("Dados Sensoriais"),
-              backgroundColor: Colors.blueGrey,
-              children: _buildSensorData(),
-            ),
-          ],*/
-        ),
-      ),
+      body: FutureBuilder<Room>(
+        future: info,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return SingleChildScrollView(
+                child: Column(
+                    children: _buildSensorData()
+                ),
+              );
+            }
+          }
+          else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return CircularProgressIndicator();
+        }
+      )
     );
   }
 
   List<Widget> _buildSensorData() {
     List<Widget> sensors=[];
-    for (String metric in info.getMetrics()) {
+    for (String metric in room.getMetrics()) {
       sensors.add(Container(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         height: 220,
@@ -73,7 +65,7 @@ class _RoomPageState extends State<RoomPage> {
             decoration: BoxDecoration(
               border: Border(
                 top: BorderSide(
-                    width: 2.0, color: info.getColor(metric)),
+                    width: 2.0, color: room.getColor(metric)),
               ),
               color: Colors.white,
             ),
@@ -134,7 +126,7 @@ class _RoomPageState extends State<RoomPage> {
       padding: const EdgeInsets.only(left: 15.0),
       child: Align(
           alignment: Alignment.centerLeft,
-          child: Image.asset(info.getIconPath(metric))),
+          child: Image.asset(room.getIconPath(metric))),
     );
   }
   Widget _metricNameSymbol(metric) {
@@ -146,20 +138,20 @@ class _RoomPageState extends State<RoomPage> {
           style: TextStyle(
               fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
           children: <TextSpan>[
-            TextSpan(
-                text: '\n${metric.substring(0, 4)}',
+            /*TextSpan(
+                text: '\n${metric.unit}',
                 style: TextStyle(
                     color: Colors.grey,
                     fontSize: 15,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold)),*/
           ],
         ),
       ),
     );
   }
   Widget _sensorChange(metric) {
-    double gain= info.getGain(metric).toDouble();
-    double gainPercentage= info.getGainPercentage(metric).toDouble() * 100;
+    double gain= room.getGain(metric).toDouble();
+    double gainPercentage= room.getGainPercentage(metric).toDouble() * 100;
     String gainStr = (gain < 0) ?gain.toStringAsFixed(2) : "+"+gain.toStringAsFixed(2);
     String gainPercentageStr = (gainPercentage < 0) ?gainPercentage.toStringAsFixed(2) : "+"+gainPercentage.toStringAsFixed(2);
     return Align(
@@ -182,7 +174,7 @@ class _RoomPageState extends State<RoomPage> {
     );
   }
   Widget _changeIcon(metric) {
-    double gainPercentage= info.getGainPercentage(metric).toDouble() * 100;
+    double gainPercentage= room.getGainPercentage(metric).toDouble() * 100;
     String gainPercentageStr = (gainPercentage < 0) ?gainPercentage.toStringAsFixed(2) : "+"+gainPercentage.toStringAsFixed(2);
     return Align(
         alignment: Alignment.topRight,
@@ -208,21 +200,21 @@ class _RoomPageState extends State<RoomPage> {
             RichText(
               textAlign: TextAlign.left,
               text: TextSpan(
-                text: '\n${info.getValue(metric)}',
+                text: '\n${room.getValue(metric)}',
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 35,
                 ),
                 children: <TextSpan>[
                   TextSpan(
-                      text: '\n${info.getTime(metric)}',
+                      text: '\n${room.getTime(metric)}',
                       style: TextStyle(
                           color: Colors.grey,
                           fontStyle: FontStyle.italic,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   TextSpan(
-                      text: '\n${info.getDate(metric)}',
+                      text: '\n${room.getDate(metric)}',
                       style: TextStyle(
                           color: Colors.grey,
                           fontStyle: FontStyle.italic,
@@ -244,12 +236,12 @@ class _RoomPageState extends State<RoomPage> {
         width: 120.0,
         height: 80.0,
         child: new Sparkline(
-          data: info.getPastValues(metric).map((s) => s as double).toList(),
+          data: room.getPastValues(metric).map((s) => s as double).toList(),
           lineWidth: 5.0,
           lineGradient: new LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [info.getColor(metric), Colors.grey],
+            colors: [room.getColor(metric), Colors.grey],
           ),
         ),
       ),
