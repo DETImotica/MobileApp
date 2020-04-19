@@ -19,6 +19,10 @@ class Room {
 
   dynamic getValue(String metric) => _metrics[metric].value;
 
+  dynamic getDescription(String metric) => _metrics[metric].description;
+
+  dynamic getUnit(String metric) => _metrics[metric].unit;
+
   dynamic getDate(String metric) => _metrics[metric].date;
 
   dynamic getTime(String metric) => _metrics[metric].time;

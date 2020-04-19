@@ -21,7 +21,7 @@ class _RoomPageState extends State<RoomPage> {
   _RoomPageState(this.room) {
     super.initState();
     info=room.update();
-    timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState((){}));
+    timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState((){room.update();}));
   }
 
   @override
@@ -138,12 +138,13 @@ class _RoomPageState extends State<RoomPage> {
           style: TextStyle(
               fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
           children: <TextSpan>[
-            /*TextSpan(
-                text: '\n${metric.unit}',
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold)),*/
+            TextSpan(
+              text: '\n${room.getUnit(metric)}',
+              style: TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+              fontWeight: FontWeight.bold)
+            ),
           ],
         ),
       ),
@@ -230,21 +231,23 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   Widget _changeGraph (metric){
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: new Container(
-        width: 120.0,
-        height: 80.0,
-        child: new Sparkline(
-          data: room.getPastValues(metric).map((s) => s as double).toList(),
-          lineWidth: 5.0,
-          lineGradient: new LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [room.getColor(metric), Colors.grey],
+    return Expanded(
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: new Container(
+          width: 120.0,
+          height: 80.0,
+          child: new Sparkline(
+            data: room.getPastValues(metric).map((s) => s as double).toList(),
+            lineWidth: 5.0,
+            lineGradient: new LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [room.getColor(metric), Colors.grey],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }
