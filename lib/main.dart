@@ -11,7 +11,35 @@ class DETIMotica extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: RoomListPage()
+      home: Start()
+    );
+  }
+}
+
+class Start extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        onTap: () {
+          Navigator.push(context,MaterialPageRoute(builder: (context) => RoomListPage()));
+        },
+        child: Center(
+          child: Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Spacer(flex: 3),
+                Image.asset("assets/images/title.png"),
+                Spacer(flex: 1),
+                Image.asset("assets/images/logo.png"),
+                Spacer(flex: 3),
+              ],
+            )
+          )
+        )
+      )
     );
   }
 }

@@ -5,15 +5,19 @@ class RoomBr {
   int dept;
   int floor;
   int num;
-  String desciption;
+  String description;
+  bool isExpanded;
+  int occupancy;
 
   Map<String,SensorBr> sensors;
 
-  RoomBr(this.dept, this.floor, this.num, this.desciption) {
+  RoomBr(this.dept, this.floor, this.num, this.description) {
     sensors=Map();
+    isExpanded=false;
+    occupancy=-1;
   }
 
-  RoomBr.id(String id, this.desciption) {
+  RoomBr.id(String id, this.description) {
     var split=id.split(".");
     if (split.length==3) {
       try {
@@ -25,7 +29,10 @@ class RoomBr {
         dept=floor=num=0;
       }
     }
+    else dept=floor=num=0;
     sensors=Map();
+    isExpanded=false;
+    occupancy=-1;
   }
 
   Room roomInfo() {

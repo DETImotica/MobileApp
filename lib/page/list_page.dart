@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:deti_motica_app/page/room_page.dart';
 import 'package:deti_motica_app/src/import.dart';
+import 'package:deti_motica_app/src/metric_icon.dart';
 import 'package:deti_motica_app/src/sensor_brief.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:deti_motica_app/api.dart';
 
@@ -31,15 +34,29 @@ class _RoomListState extends State<RoomListPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState==ConnectionState.done) {
               if (snapshot.hasData) {
-                return ListView(
-                    children: _buildRoomList(context,snapshot.data)
+                return SingleChildScrollView(
+                  child: Container(
+                    child: _buildRoomList(context,snapshot.data)
+                  )
                 );
               }
             }
             else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             }
-            return CircularProgressIndicator();
+            return Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Spacer(flex: 3),
+                  Image.asset("assets/images/logo.png",height: 48,width: 48),
+                  Spacer(flex: 1),
+                  CircularProgressIndicator(),
+                  Spacer(flex: 3),
+                ],
+              )
+            );
           }
         )
     );
@@ -79,27 +96,106 @@ class _RoomListState extends State<RoomListPage> {
           print(exc);
         }
       }
+      //TODO fetch occupants from sensor
+      room.occupancy=Random().nextInt(3);
     }
 
     return list;
   }
 
-  List<Widget> _buildRoomList(BuildContext context, List<RoomBr> rList) {
-    List<Widget> list=List();
-
-    for (RoomBr room in rList) {
-      list.add(Container(
-        padding: EdgeInsets.all(8),
-        child: FlatButton(
-          child: Align(
-            child: Text("${room.dept}.${room.floor}.${room.num}"),
-            alignment: Alignment.centerLeft,
-          ),
-          onPressed: () {
-            Navigator.push(context,MaterialPageRoute(builder: (context) => RoomPage(room.roomInfo())));
+  Widget _buildRoomList(BuildContext context, List<RoomBr> rList) {
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          rList[index].isExpanded=!isExpanded;
+        });
+      },
+      children: rList.map<ExpansionPanel>((RoomBr room) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return (isExpanded?
+            Container(
+              padding: EdgeInsets.fromLTRB(30, 16, 30, 16),
+              alignment: Alignment.center,
+              child: Text(
+                "${room.dept}.${room.floor}.${room.num}",
+                style: TextStyle(fontSize: 28),
+              ),
+            ):
+            Padding(
+                padding: EdgeInsets.fromLTRB(30, 16, 30, 16),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "${room.dept}.${room.floor}.${room.num}",
+                      style: TextStyle(fontSize: 28),
+                    ),
+                    Expanded(
+                      child: Text(
+                        "${room.occupancy} pessoas",
+                        style: TextStyle(color: Colors.grey, fontSize: 24),
+                        textAlign: TextAlign.right,
+                      )
+                    )
+                  ],
+                )
+              )
+            );
           },
-        )
-      ));
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text(
+                    "Número estimado de ocupantes: ${room.occupancy}",
+                    style: TextStyle(fontSize: 24),
+                    textAlign: TextAlign.left
+                  ),
+                )
+              ),
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text(
+                      "${room.description}",
+                      style: TextStyle(color: Colors.grey, fontSize: 20),
+                      textAlign: TextAlign.left
+                  ),
+                )
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 8, 8, 30),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Wrap(children: _getRoomIcons(room), direction: Axis.horizontal,),
+                    IconButton(
+                      icon: Icon(Icons.details),
+                      iconSize: 72,
+                      onPressed: () {
+                        rList.forEach((RoomBr r) {r.isExpanded=false;});
+                        Navigator.push(context,MaterialPageRoute(builder: (context) => RoomPage(room.roomInfo())));
+                      },
+                    )
+                  ],
+                )
+              )
+            ],
+          ),
+          isExpanded: room.isExpanded
+        );
+      }).toList()
+    );
+  }
+
+  List<Widget> _getRoomIcons(RoomBr room) {
+    List<Widget> list=List();
+    for (SensorBr sensor in room.sensors.values) {
+      if (MetricIcon.getData.containsKey(sensor.type)) list.add(
+        Image.asset(MetricIcon.getData[sensor.type]["path"],width: 24,height: 24)
+      );
     }
     return list;
   }

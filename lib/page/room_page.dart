@@ -25,6 +25,12 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +52,19 @@ class _RoomPageState extends State<RoomPage> {
           else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          return CircularProgressIndicator();
+          return Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Spacer(flex: 3),
+                  Image.asset("assets/images/logo.png",height: 48,width: 48),
+                  Spacer(flex: 1),
+                  CircularProgressIndicator(),
+                  Spacer(flex: 3),
+                ],
+              )
+          );
         }
       )
     );
@@ -126,7 +144,7 @@ class _RoomPageState extends State<RoomPage> {
       padding: const EdgeInsets.only(left: 15.0),
       child: Align(
           alignment: Alignment.centerLeft,
-          child: Image.asset(room.getIconPath(metric))),
+          child: (room.getIconPath(metric)==null?null:Image.asset(room.getIconPath(metric)))),
     );
   }
   Widget _metricNameSymbol(metric) {
@@ -237,6 +255,7 @@ class _RoomPageState extends State<RoomPage> {
         child: new Container(
           width: 120.0,
           height: 80.0,
+          padding: EdgeInsets.only(right: 8),
           child: new Sparkline(
             data: room.getPastValues(metric).map((s) => s as double).toList(),
             lineWidth: 5.0,

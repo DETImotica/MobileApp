@@ -23,7 +23,7 @@ class Metric {
     value=0;
     date= "Invalid Date";
     time= "Invalid Hour";
-    iconPath= iconData[this.type]['path'];
+    iconPath= (iconData.containsKey(this.type)?iconData[this.type]['path']:null);
     color= iconData[this.type]['color'];
     pastValues= [0.0,1.0,2.0,3.0,4.0,5.0];
     gain=0;
@@ -33,20 +33,21 @@ class Metric {
   update() async {
     DateTime now= DateTime.now();
     DateTime ago10= now.subtract(new Duration(minutes: 1));
-    String post=url+"api/v1/sensor/$id/measure/interval?start="+ago10.toString()+"&end="+now.toString();
+    String post=url+"api/v1/sensor/$id/measure/interval?start="+ago10.toUtc().toString().replaceAll(" ", "T")+"&end="+now.toUtc().toString().replaceAll(" ", "T");
     String responseBody=await apiGet(post);
-      var dict=jsonDecode(responseBody);
-      var data= [];
-      for (var tuple in dict["values"]){
-        data.add(tuple["value"].toDouble());
-      }
-      if (data.length > 0){
-        pastValues= data;
-        value=dict["values"][data.length-1]["value"];
-        date=dict["values"][data.length-1]["time"].toString().substring(0,10);
-        time=dict["values"][data.length-1]["time"].toString().substring(11,19);
-        (data.length > 1) ? gain= dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"]: gain = 0;
-        (data.length > 1) ? gainPercentage= (dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"])/dict["values"][data.length-2]["value"].toDouble(): gainPercentage = 0;
-      }
+
+    var dict=jsonDecode(responseBody);
+    var data= [];
+    for (var tuple in dict["values"]){
+      data.add(tuple["value"].toDouble());
+    }
+    if (data.length > 0){
+      pastValues= data;
+      value=dict["values"][data.length-1]["value"];
+      date=dict["values"][data.length-1]["time"].toString().substring(0,10);
+      time=dict["values"][data.length-1]["time"].toString().substring(11,19);
+      (data.length > 1) ? gain= dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"]: gain = 0;
+      (data.length > 1) ? gainPercentage= (dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"])/dict["values"][data.length-2]["value"].toDouble(): gainPercentage = 0;
+    }
   }
 }
