@@ -4,7 +4,6 @@ import 'package:deti_motica_app/page/room_page.dart';
 import 'package:deti_motica_app/src/import.dart';
 import 'package:deti_motica_app/src/metric_icon.dart';
 import 'package:deti_motica_app/src/sensor_brief.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:deti_motica_app/api.dart';
 
@@ -36,7 +35,10 @@ class _RoomListState extends State<RoomListPage> {
               if (snapshot.hasData) {
                 return SingleChildScrollView(
                   child: Container(
-                    child: _buildRoomList(context,snapshot.data)
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child:_buildRoomList(context,snapshot.data)
+                    )
                   )
                 );
               }
@@ -122,25 +124,25 @@ class _RoomListState extends State<RoomListPage> {
                 style: TextStyle(fontSize: 28),
               ),
             ):
-            Padding(
-                padding: EdgeInsets.fromLTRB(30, 16, 30, 16),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "${room.dept}.${room.floor}.${room.num}",
-                      style: TextStyle(fontSize: 28),
-                    ),
-                    Expanded(
-                      child: Text(
-                        "${room.occupancy} pessoas",
-                        style: TextStyle(color: Colors.grey, fontSize: 24),
-                        textAlign: TextAlign.right,
-                      )
+            Container(
+              padding: EdgeInsets.fromLTRB(30, 16, 30, 16),
+              alignment: Alignment.center,
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    "${room.dept}.${room.floor}.${room.num}",
+                    style: TextStyle(fontSize: 28),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "${room.occupancy} pessoas",
+                      style: TextStyle(color: Colors.grey, fontSize: 24),
+                      textAlign: TextAlign.right,
                     )
-                  ],
-                )
+                  )
+                ],
               )
-            );
+            ));
           },
           body: Column(
             mainAxisSize: MainAxisSize.min,
@@ -168,16 +170,19 @@ class _RoomListState extends State<RoomListPage> {
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 8, 8, 30),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Wrap(children: _getRoomIcons(room), direction: Axis.horizontal,),
-                    IconButton(
-                      icon: Icon(Icons.details),
-                      iconSize: 72,
-                      onPressed: () {
-                        rList.forEach((RoomBr r) {r.isExpanded=false;});
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => RoomPage(room.roomInfo())));
-                      },
+                    Expanded(
+                      child: Wrap(children: _getRoomIcons(room), direction: Axis.horizontal)
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(8, 0, 16, 0),
+                      child: IconButton(
+                        icon: Image.asset("assets/images/details.png"),
+                        iconSize: 48,
+                        onPressed: () {
+                          Navigator.push(context,MaterialPageRoute(builder: (context) => RoomPage(room.roomInfo())));
+                        },
+                      )
                     )
                   ],
                 )
@@ -194,7 +199,7 @@ class _RoomListState extends State<RoomListPage> {
     List<Widget> list=List();
     for (SensorBr sensor in room.sensors.values) {
       if (MetricIcon.getData.containsKey(sensor.type)) list.add(
-        Image.asset(MetricIcon.getData[sensor.type]["path"],width: 24,height: 24)
+        Image.asset(MetricIcon.getData[sensor.type]["path"],width: 48,height: 48)
       );
     }
     return list;

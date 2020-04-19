@@ -44,8 +44,9 @@ class Metric {
     if (data.length > 0){
       pastValues= data;
       value=dict["values"][data.length-1]["value"];
-      date=dict["values"][data.length-1]["time"].toString().substring(0,10);
-      time=dict["values"][data.length-1]["time"].toString().substring(11,19);
+      DateTime dt=DateTime.parse(dict["values"][data.length-1]["time"]).toLocal();
+      date="${dt.year}-${dt.month}-${dt.day}";
+      time="${dt.hour}:${dt.minute}:${dt.second}";
       (data.length > 1) ? gain= dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"]: gain = 0;
       (data.length > 1) ? gainPercentage= (dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"])/dict["values"][data.length-2]["value"].toDouble(): gainPercentage = 0;
     }
