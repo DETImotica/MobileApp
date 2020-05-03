@@ -15,29 +15,93 @@ class RoomListPage extends StatefulWidget {
 class _RoomListState extends State<RoomListPage> {
 
   Future<List<RoomBr>> roomList;
+  bool ready=false;
 
   _RoomListState() {
+    _filter.addListener(() {
+      if (_filter.text.isEmpty) {
+        setState(() {
+          _searchText = "";
+          _roomsFiltered = _rooms;
+        });
+      }
+      else {
+        setState(() {
+          _searchText = _filter.text;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
     super.initState();
     roomList=_getRooms();
+  }
+
+  String title="Salas Monitorizadas";
+
+  final TextEditingController _filter = new TextEditingController();
+
+  String _searchText = "";
+  List<RoomBr> _rooms=List();
+  List<RoomBr> _roomsFiltered=List();
+  Icon _searchIcon = new Icon(Icons.search);
+  Widget _appBarTitle = new Text("Salas Monitorizadas");
+
+  void _searchPressed() {
+    if (ready) setState(() {
+      if (_searchIcon.icon == Icons.search) {
+        _searchIcon = new Icon(Icons.close);
+        _appBarTitle = new TextField(
+          controller: _filter,
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search),
+              hintText: '<dep>.<piso>.<sala>'
+          ),
+        );
+      } else {
+        _searchIcon = new Icon(Icons.search);
+        _appBarTitle = new Text("$title");
+        _roomsFiltered = _rooms;
+        _filter.clear();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Salas Monitorizadas"),
           centerTitle: true,
+          title: _appBarTitle,
+          leading: new IconButton(
+            icon: _searchIcon,
+            onPressed: _searchPressed,
+          ),
+
         ),
         body: FutureBuilder<List<RoomBr>>(
           future: roomList,
           builder: (context, snapshot) {
             if (snapshot.connectionState==ConnectionState.done) {
               if (snapshot.hasData) {
+                ready=true;
+
+                if (_searchText.isNotEmpty) {
+                  List<RoomBr> tempList = new List<RoomBr>();
+                  for (int i = 0; i < _roomsFiltered.length; i++) {
+                    if (_roomsFiltered[i].getName().toLowerCase().contains(_searchText.toLowerCase())) {
+                      tempList.add(_roomsFiltered[i]);
+                    }
+                  }
+                  _roomsFiltered = tempList;
+                }
                 return SingleChildScrollView(
                   child: Container(
                     child: Padding(
                       padding: EdgeInsets.all(8),
-                      child:_buildRoomList(context,snapshot.data)
+                      child:Column(children:<Widget>[_buildRoomList(context,_roomsFiltered)])
                     )
                   )
                 );
@@ -101,7 +165,8 @@ class _RoomListState extends State<RoomListPage> {
       //TODO fetch occupants from sensor
       room.occupancy=Random().nextInt(3);
     }
-
+    _rooms=list;
+    _roomsFiltered=_rooms;
     return list;
   }
 

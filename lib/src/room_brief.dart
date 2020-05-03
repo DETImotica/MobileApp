@@ -38,4 +38,6 @@ class RoomBr {
   Room roomInfo() {
     return Room(sensors,dept,floor,num);
   }
+
+  String getName() => "$dept.$floor.$num";
 }
