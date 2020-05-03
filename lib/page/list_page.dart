@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:deti_motica_app/page/room_page.dart';
 import 'package:deti_motica_app/src/import.dart';
-import 'package:deti_motica_app/src/metric_icon.dart';
+import 'package:deti_motica_app/src/metric_utils.dart';
 import 'package:deti_motica_app/src/sensor_brief.dart';
 import 'package:flutter/material.dart';
 import 'package:deti_motica_app/api.dart';

@@ -1,4 +1,5 @@
 import "package:deti_motica_app/src/metric.dart";
+import 'package:deti_motica_app/src/metric_utils.dart';
 import 'package:deti_motica_app/src/sensor_brief.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,8 @@ class Room {
   dynamic getTime(String metric) => _metrics[metric].time;
 
   String getIconPath(String metric) => _metrics[metric].iconPath;
+
+  Image getGauge(String metric, dynamic value) => MetricRanges.getGauge(metric,value);
 
   Color getColor (String metric) => _metrics[metric].color;
 

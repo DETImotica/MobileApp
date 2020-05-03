@@ -99,7 +99,8 @@ class _RoomPageState extends State<RoomPage> {
                           child: Column(
                             children: <Widget>[
                               Row(
-                                children: <Widget>[_metricIcon(metric),
+                                children: <Widget>[
+                                  _metricIcon(metric),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -116,13 +117,12 @@ class _RoomPageState extends State<RoomPage> {
                                 ],
                               ),
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  _sensorValueData(metric),
-                                  SizedBox(
-                                    width: 100,
-                                  ),
+                                  Expanded(child:_sensorValueData(metric)),
+                                  room.getGauge(metric, room.getValue(metric)),
                                   _changeGraph(metric)
-                                ],
+                                ].where((Object o)=>o!=null).toList(),
                               )
                             ],
                           ))
@@ -222,7 +222,7 @@ class _RoomPageState extends State<RoomPage> {
                 text: '\n${room.getValue(metric)}',
                 style: TextStyle(
                   color: Colors.grey,
-                  fontSize: 35,
+                  fontSize: 30,
                 ),
                 children: <TextSpan>[
                   TextSpan(

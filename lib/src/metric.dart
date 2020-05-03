@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:deti_motica_app/src/metric_icon.dart';
+import 'package:deti_motica_app/src/metric_utils.dart';
 import 'package:deti_motica_app/api.dart';
 import 'package:flutter/material.dart';
 
