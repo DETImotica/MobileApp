@@ -1,4 +1,5 @@
 import 'package:deti_motica_app/page/list_page.dart';
+import 'package:deti_motica_app/page/login.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(DETIMotica());
@@ -22,7 +23,7 @@ class Start extends StatelessWidget {
     return Scaffold(
       body: GestureDetector(
         onTap: () {
-          Navigator.push(context,MaterialPageRoute(builder: (context) => RoomListPage()));
+          Navigator.push(context,MaterialPageRoute(builder: (context) => Login()));
         },
         child: Center(
           child: Align(

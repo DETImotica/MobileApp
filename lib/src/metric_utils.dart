@@ -20,7 +20,7 @@ class MetricRanges {
     'Luminosidade': {'min': 100, 'midlow': 200, 'midhigh': 500},
     'Temperatura': {'min': 12, 'midlow': 18, 'midhigh': 24, 'max': 30},
     'Som': {'midlow': 0, 'midhigh': 65, 'max': 100},
-    'Humidade': {'midlow': 30, 'midhigh': 40, 'max': 55},
+    'Humidade': {'midlow': 30, 'midhigh': 50, 'max': 65},
     'Dióxido de Carbono': {'midlow': 100, 'midhigh': 1000, 'max': 2000},
     'Qualidade do Ar': {'midlow': 0, 'midhigh': 100, 'max': 200},
   };

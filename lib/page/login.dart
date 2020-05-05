@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'package:webview_flutter/webview_flutter.dart';
-import 'dart:io';
-import 'dart:convert';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'dart:async';
 import 'package:deti_motica_app/api.dart';
 
 class Login extends StatefulWidget {
@@ -10,6 +9,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  //Completer<WebViewController> _controller = Completer<WebViewController>();
+  WebViewController _controller;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,40 +19,22 @@ class _LoginState extends State<Login> {
         title: Text("DETIMotica"),
         centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          FlatButton(
-            child: Text(
-              "Login",
-              style: TextStyle(fontSize: 28),
-            ),
-            onPressed: _login(),
-          )
-        ],
+      body: WebView(
+        initialUrl: url+"api/v1/logout",
+        onWebViewCreated: (WebViewController webViewController) {
+          _controller=webViewController;
+        },
+        javascriptMode: JavascriptMode.unrestricted,
+        onPageFinished: (String str) {
+          _test();
+        },
+
       )
     );
   }
-}
 
-_login() {
-  HttpClient client = new HttpClient()
-    ..badCertificateCallback = (certificateCheck);
-
-  String post = url + "api/v1/login";
-
-  makeRequest() async {
-    var request = await client.getUrl(Uri.parse(post));
-    var response = await request.close();
-    String responseBody = await response.transform(utf8.decoder).join();
-
-    if (response.statusCode >= 200 && response.statusCode <= 400) {
-      print(responseBody);
-    }
-    else
-      print("Communications Error: ${response.statusCode}");
-
-    client.close();
+  _test() async {
+    var cookie=_controller.evaluateJavascript('document.cookie');
+    cookie.then((String str) {print("$str");});
   }
-  makeRequest();
 }
