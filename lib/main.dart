@@ -21,23 +21,36 @@ class Start extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          Navigator.push(context,MaterialPageRoute(builder: (context) => Login()));
-        },
-        child: Center(
-          child: Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(flex: 3),
-                Image.asset("assets/images/title.png"),
-                Spacer(flex: 1),
-                Image.asset("assets/images/logo.png"),
-                Spacer(flex: 3),
-              ],
-            )
+      body: Center(
+        child: Align(
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Image.asset("assets/images/title.png", scale: 0.5),
+              Image.asset("assets/images/logo.png", scale: 0.5),
+              RaisedButton(
+                onPressed: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Login())),
+                child: Text(
+                  "ENTRAR",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+                color: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)
+                ),
+              ),
+              Text(
+                "Powered by DETI UA",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              )
+            ],
           )
         )
       )

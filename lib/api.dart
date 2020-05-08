@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
+//String apiHost="192.168.85.215/";
 String apiHost="detimotic-aulas.ws.atnog.av.it.pt/";
 String url="https://$apiHost";
 
@@ -12,7 +13,9 @@ Future<String> apiGet(String url) async {
   HttpClient client = new HttpClient()
     ..badCertificateCallback = (certificateCheck);
 
+  print("Start: $url");
   var request=await client.getUrl(Uri.parse(url));
+  print("Done");
   var response=await request.close();
   String responseBody = await response.transform(utf8.decoder).join();
   client.close();

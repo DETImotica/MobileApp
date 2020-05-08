@@ -20,7 +20,7 @@ class _LoginState extends State<Login> {
         centerTitle: true,
       ),
       body: WebView(
-        initialUrl: url+"api/v1/logout",
+        initialUrl: url+"api/v1/login",
         onWebViewCreated: (WebViewController webViewController) {
           _controller=webViewController;
         },

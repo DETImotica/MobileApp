@@ -97,13 +97,22 @@ class _RoomListState extends State<RoomListPage> {
                   }
                   _roomsFiltered = tempList;
                 }
-                return SingleChildScrollView(
-                  child: Container(
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child:Column(children:<Widget>[_buildRoomList(context,_roomsFiltered)])
+                return Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container()
+                    ),
+                    Expanded(
+                      child:SingleChildScrollView(
+                        child: Container(
+                          child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child:Column(children:<Widget>[_buildRoomList(context,_roomsFiltered)])
+                          )
+                        )
+                      )
                     )
-                  )
+                  ]
                 );
               }
             }
