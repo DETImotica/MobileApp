@@ -1,3 +1,4 @@
+import 'package:deti_motica_app/api.dart';
 import 'package:flutter/material.dart';
 import 'package:deti_motica_app/src/import.dart';
 import 'package:typicons_flutter/typicons_flutter.dart';
@@ -21,7 +22,10 @@ class _RoomPageState extends State<RoomPage> {
   _RoomPageState(this.room) {
     super.initState();
     info=room.update();
-    timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState((){room.update();}));
+    timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState(() {
+      room.update();
+      if (statusCode==401) Navigator.pushNamedAndRemoveUntil(context, "/err/401", ModalRoute.withName('/'));
+    }));
   }
 
   @override
@@ -30,12 +34,26 @@ class _RoomPageState extends State<RoomPage> {
     super.dispose();
   }
 
+  void _logout() async {
+    String post=url+"api/v1/logout";
+    await apiGet(post);
+
+    if (statusCode==401) Navigator.pushNamedAndRemoveUntil(context, "/err/401", ModalRoute.withName('/'));
+    else Navigator.popUntil(context, ModalRoute.withName('/'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Sala ${room.dept}.${room.floor}.${room.num}"),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: _logout,
+          )
+        ],
       ),
       body: FutureBuilder<Room>(
         future: info,

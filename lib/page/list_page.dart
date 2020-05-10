@@ -47,93 +47,117 @@ class _RoomListState extends State<RoomListPage> {
   List<RoomBr> _rooms=List();
   List<RoomBr> _roomsFiltered=List();
   Icon _searchIcon = new Icon(Icons.search);
-  Widget _appBarTitle = new Text("Salas Monitorizadas");
+  Widget _searchBarTitle = new Text("Salas Monitorizadas");
 
   void _searchPressed() {
     if (ready) setState(() {
       if (_searchIcon.icon == Icons.search) {
         _searchIcon = new Icon(Icons.close);
-        _appBarTitle = new TextField(
+        _searchBarTitle = new TextField(
           controller: _filter,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search),
               hintText: '<dep>.<piso>.<sala>'
           ),
         );
-      } else {
+      }
+       else {
         _searchIcon = new Icon(Icons.search);
-        _appBarTitle = new Text("$title");
+        _searchBarTitle = new Text("Search...");
         _roomsFiltered = _rooms;
         _filter.clear();
       }
     });
   }
 
+  void _logout() async {
+    String post=url+"api/v1/logout";
+    await apiGet(post);
+
+    if (statusCode==401) Navigator.popAndPushNamed(context, "/err/401");
+    else Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: _appBarTitle,
-          leading: new IconButton(
-            icon: _searchIcon,
-            onPressed: _searchPressed,
-          ),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("$title"),
+        leading: new Container(),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: _logout,
+          )
+        ],
+      ),
+      body: FutureBuilder<List<RoomBr>>(
+        future: roomList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState==ConnectionState.done) {
+            if (snapshot.hasData) {
+              ready=true;
 
-        ),
-        body: FutureBuilder<List<RoomBr>>(
-          future: roomList,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState==ConnectionState.done) {
-              if (snapshot.hasData) {
-                ready=true;
-
-                if (_searchText.isNotEmpty) {
-                  List<RoomBr> tempList = new List<RoomBr>();
-                  for (int i = 0; i < _roomsFiltered.length; i++) {
-                    if (_roomsFiltered[i].getName().toLowerCase().contains(_searchText.toLowerCase())) {
-                      tempList.add(_roomsFiltered[i]);
-                    }
+              if (_searchText.isNotEmpty) {
+                List<RoomBr> tempList = new List<RoomBr>();
+                for (int i = 0; i < _roomsFiltered.length; i++) {
+                  if (_roomsFiltered[i].getName().toLowerCase().contains(_searchText.toLowerCase())) {
+                    tempList.add(_roomsFiltered[i]);
                   }
-                  _roomsFiltered = tempList;
                 }
-                return Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container()
-                    ),
-                    Expanded(
-                      child:SingleChildScrollView(
-                        child: Container(
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child:Column(children:<Widget>[_buildRoomList(context,_roomsFiltered)])
-                          )
+                _roomsFiltered = tempList;
+              }
+              return Column(
+                children: <Widget>[
+                  /*Expanded(
+                    child: Container()
+                  ),*/
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        IconButton(
+                          icon: _searchIcon,
+                          onPressed: _searchPressed,
+                        ),
+                        Expanded(child: _searchBarTitle),
+                      ],
+                    )
+                  ),
+                  Expanded(
+                    child:SingleChildScrollView(
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Column(children:<Widget>[_buildRoomList(context,_roomsFiltered)])
                         )
                       )
                     )
-                  ]
-                );
-              }
+                  )
+                ]
+              );
             }
-            else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-            return Align(
-              alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Spacer(flex: 3),
-                  Image.asset("assets/images/logo.png",height: 48,width: 48),
-                  Spacer(flex: 1),
-                  CircularProgressIndicator(),
-                  Spacer(flex: 3),
-                ],
-              )
-            );
           }
-        )
+          else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Spacer(flex: 3),
+                Image.asset("assets/images/logo.png",height: 48,width: 48),
+                Spacer(flex: 1),
+                CircularProgressIndicator(),
+                Spacer(flex: 3),
+              ],
+            )
+          );
+        }
+      )
     );
   }
 
@@ -149,7 +173,9 @@ class _RoomListState extends State<RoomListPage> {
       try {
         stop=true;
         response=await apiGet(post);
-        if (num.tryParse(response)==502) stop=false;
+        var code=num.tryParse(response);
+        if (code==502) stop=false;
+        else if (code==401) Navigator.popAndPushNamed(context, "/err/401");
         dict=jsonDecode(response);
       }
       on FormatException {

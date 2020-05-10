@@ -27,14 +27,14 @@ class _LoginState extends State<Login> {
         },
         javascriptMode: JavascriptMode.unrestricted,
         onPageFinished: (String str) {
-          _finishedCheck();
+          _finishedCheck(str);
         },
-
+        //javascriptChannels: ,
       )
     );
   }
 
-  _finishedCheck() async {
+  _finishedCheck(String str) async {
     var currUrl=await _controller.currentUrl();
     if (currUrl.contains(apiHost)) {
       _controller.evaluateJavascript("document.cookie").then((value) {
@@ -42,7 +42,7 @@ class _LoginState extends State<Login> {
         if (cookie.length>1){
           setSession(cookie[1].replaceAll('"',''));
 
-          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => RoomListPage()));
+          Navigator.popAndPushNamed(context, "/rooms");
         }
       });
     }
