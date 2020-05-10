@@ -1,4 +1,3 @@
-import 'package:deti_motica_app/page/list_page.dart';
 import 'package:deti_motica_app/page/login.dart';
 import 'package:flutter/material.dart';
 

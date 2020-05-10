@@ -141,9 +141,23 @@ class _RoomListState extends State<RoomListPage> {
     List<RoomBr> list=List();
 
     String post=url+"api/v1/rooms";
-    String response=await apiGet(post);
+    String response;
+    bool stop=true;
+    var dict;
 
-    var dict=jsonDecode(response);
+    do {
+      try {
+        stop=true;
+        response=await apiGet(post);
+        if (num.tryParse(response)==502) stop=false;
+        dict=jsonDecode(response);
+      }
+      on FormatException {
+        print("Could not decode response: ${(response[0]=="<"?"(HTML page)":response)}");
+        stop=false;
+      }
+    } while(!stop);
+
     for (String id in dict["ids"]) {
       post=url+"api/v1/room/$id";
       response=await apiGet(post);
