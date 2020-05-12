@@ -8,9 +8,12 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name=".Application"
-        android:label="deti_motica_app"
-        android:icon="@mipmap/ic_launcher"
+        android:label="DETIMotica"
+        android:icon="@drawable/logo"
         android:usesCleartextTraffic="true">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logo" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
