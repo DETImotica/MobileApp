@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1048686566582",
+    "firebase_url": "https://detimotic.firebaseio.com",
+    "project_id": "detimotic",
+    "storage_bucket": "detimotic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1048686566582:android:3a02003763152db5361a17",
+        "android_client_info": {
+          "package_name": "com.example.deti_motica_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1048686566582-5c6st89cqcpom8bbigh8gsd2m4r76e0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0CKnvzCCHHFKCE4D2FtW6mLS-JvJdCp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1048686566582-5c6st89cqcpom8bbigh8gsd2m4r76e0j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
