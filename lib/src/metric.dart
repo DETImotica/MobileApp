@@ -18,14 +18,14 @@ class Metric {
   dynamic gainPercentage;
   bool tracked;
 
-  var iconData = MetricIcon.getData;
-
   Metric(this.id,this.type,[this.description,this.unit]) {
     value=0;
     date= "Invalid Date";
     time= "Invalid Hour";
-    iconPath= (iconData.containsKey(this.type)?iconData[this.type]['path']:null);
-    color= iconData[this.type]['color'];
+    /*iconPath= (iconData.containsKey(this.type)?iconData[this.type]['path']:null);
+    color= iconData[this.type]['color'];*/
+    iconPath=MetricIcon.getIcon(type);
+    color=MetricIcon.getColour(type);
     pastValues= [0.0,1.0,2.0,3.0,4.0,5.0];
     gain=0;
     gainPercentage=0;

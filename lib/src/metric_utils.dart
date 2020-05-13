@@ -12,6 +12,16 @@ class MetricIcon{
     'Qualidade do Ar': {'path': 'assets/images/iaq.png', 'color': Colors.blue},
     'Bluetooth': {'path': 'assets/images/bluetooth.png', 'color': Colors.blue}
   };
+
+  static String getIcon(String metric) {
+    if (getData.containsKey(metric)) return getData[metric]['path'];
+    else return 'assets/images/noimage.png';
+  }
+
+  static Color getColour(String metric) {
+    if (getData.containsKey(metric)) return getData[metric]['color'];
+    else return Colors.grey;
+  }
 }
 
 class MetricRanges {

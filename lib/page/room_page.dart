@@ -24,7 +24,7 @@ class _RoomPageState extends State<RoomPage> {
   Timer timer;
 
   _trackedFromJson() async {
-    String data;//=await DefaultAssetBundle.of(context).loadString("assets/trackedSensors.json");
+    String data;
     Map dict;
     try {
       final Directory directory=await getApplicationDocumentsDirectory();
@@ -43,7 +43,7 @@ class _RoomPageState extends State<RoomPage> {
     room.initTracked(dict);
   }
   _toggleTracked(String metric) async {
-    String data;//=await DefaultAssetBundle.of(context).loadString("assets/trackedSensors.json");
+    String data;
     Map dict;
     try {
       final Directory directory=await getApplicationDocumentsDirectory();
@@ -93,6 +93,7 @@ class _RoomPageState extends State<RoomPage> {
   }
 
   void _logout() async {
+    timer?.cancel();
     String post=url+"api/v1/logout";
     await apiGet(post);
 
@@ -177,13 +178,12 @@ class _RoomPageState extends State<RoomPage> {
                               Row(
                                 children: <Widget>[
                                   IconButton(
-                                    icon: Icon(Icons.track_changes),
+                                    icon: Icon(room.isTracked(metric)?Icons.notifications:Icons.notifications_none),
                                     color: (room.isTracked(metric)?Colors.blue:Colors.grey),
                                     onPressed: () {
                                       setState(() {
-                                        room.toggleTracked(metric);
+                                        _toggleTracked(metric);
                                       });
-                                      _toggleTracked(metric);
                                     },
                                   ),
                                   _metricIcon(metric),

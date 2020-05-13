@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:deti_motica_app/push_notifications.dart';
 import "package:deti_motica_app/src/metric.dart";
 import 'package:deti_motica_app/src/metric_utils.dart';
 import 'package:deti_motica_app/src/sensor_brief.dart';
@@ -49,13 +50,18 @@ class Room {
   initTracked(Map dict) {
     for (String id in dict['tracked']) {
       _metrics.forEach((key, value) {
-        if (id==value.id) value.tracked=true;
+        if (id==value.id) {
+          value.tracked=true;
+          pnm.subscribe(id);
+        }
       });
     }
   }
 
   bool toggleTracked(String metric) {
     _metrics[metric].tracked=!_metrics[metric].tracked;
+    if (_metrics[metric].tracked) pnm.subscribe(getIdOf(metric));
+    else pnm.unsubscribe(getIdOf(metric));
     return _metrics[metric].tracked;
   }
 

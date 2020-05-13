@@ -242,7 +242,7 @@ class _RoomListState extends State<RoomListPage> {
               padding: EdgeInsets.fromLTRB(30, 16, 30, 16),
               alignment: Alignment.center,
               child: Text(
-                "${room.dept}.${room.floor}.${room.num}",
+                "${room.name}",
                 style: TextStyle(fontSize: 28),
               ),
             ):
@@ -252,7 +252,7 @@ class _RoomListState extends State<RoomListPage> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    "${room.dept}.${room.floor}.${room.num}",
+                    "${room.name}",
                     style: TextStyle(fontSize: 28),
                   ),
                   Expanded(
@@ -321,9 +321,7 @@ class _RoomListState extends State<RoomListPage> {
   List<Widget> _getRoomIcons(RoomBr room) {
     List<Widget> list=List();
     for (SensorBr sensor in room.sensors.values) {
-      if (MetricIcon.getData.containsKey(sensor.type)) list.add(
-        Image.asset(MetricIcon.getData[sensor.type]["path"],width: 48,height: 48)
-      );
+      list.add(Image.asset(MetricIcon.getIcon(sensor.type),width: 48,height: 48));
     }
     return list;
   }
