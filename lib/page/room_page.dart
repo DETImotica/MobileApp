@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:deti_motica_app/api.dart';
 import 'package:flutter/material.dart';
 import 'package:deti_motica_app/src/import.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:typicons_flutter/typicons_flutter.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'dart:async';
@@ -19,8 +23,62 @@ class _RoomPageState extends State<RoomPage> {
   Future<Room> info;
   Timer timer;
 
+  _trackedFromJson() async {
+    String data;//=await DefaultAssetBundle.of(context).loadString("assets/trackedSensors.json");
+    Map dict;
+    try {
+      final Directory directory=await getApplicationDocumentsDirectory();
+      final File file=File('${directory.path}/trackedSensors');
+      if (!file.existsSync()) {
+        file.writeAsStringSync('{"tracked": []}');
+      }
+      data=await file.readAsString();
+      dict=jsonDecode(data);
+    }
+    on FormatException {
+      print("WARING: Corrupted file!");
+      return;
+    }
+    print(dict);
+    room.initTracked(dict);
+  }
+  _toggleTracked(String metric) async {
+    String data;//=await DefaultAssetBundle.of(context).loadString("assets/trackedSensors.json");
+    Map dict;
+    try {
+      final Directory directory=await getApplicationDocumentsDirectory();
+      final File file=File('${directory.path}/trackedSensors');
+      data=await file.readAsString();
+      dict=jsonDecode(data);
+    }
+    on FormatException {
+      print("WARING: Corrupted file!");
+      return;
+    }
+    bool on=room.toggleTracked(metric);
+    String id=room.getIdOf(metric);
+    List lst=dict['tracked'];
+    if (on) {
+      if (!lst.contains(id)) dict['tracked'].add(id);
+    }
+    else {
+      if (lst.contains(id)) dict['tracked'].remove(id);
+    }
+
+    try {
+      final Directory directory=await getApplicationDocumentsDirectory();
+      final File file=File('${directory.path}/trackedSensors');
+      file.writeAsString(jsonEncode(dict));
+    }
+    on FormatException {
+      print("WARING: Corrupted file!");
+      return;
+    }
+    print(dict);
+  }
+
   _RoomPageState(this.room) {
-    super.initState();
+    _trackedFromJson();
     info=room.update();
     timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState(() {
       room.update();
@@ -118,20 +176,23 @@ class _RoomPageState extends State<RoomPage> {
                             children: <Widget>[
                               Row(
                                 children: <Widget>[
-                                  _metricIcon(metric),
-                                  SizedBox(
-                                    height: 10,
+                                  IconButton(
+                                    icon: Icon(Icons.track_changes),
+                                    color: (room.isTracked(metric)?Colors.blue:Colors.grey),
+                                    onPressed: () {
+                                      setState(() {
+                                        room.toggleTracked(metric);
+                                      });
+                                      _toggleTracked(metric);
+                                    },
                                   ),
+                                  _metricIcon(metric),
+                                  SizedBox(width: 5),
                                   _metricNameSymbol(metric),
                                   Spacer(),
                                   _sensorChange(metric),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
+                                  SizedBox(width: 10),
                                   _changeIcon(metric),
-                                  SizedBox(
-                                    width: 20,
-                                  )
                                 ],
                               ),
                               Row(

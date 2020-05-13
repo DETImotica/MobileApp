@@ -16,6 +16,7 @@ class Metric {
   dynamic pastValues;
   dynamic gain;
   dynamic gainPercentage;
+  bool tracked;
 
   var iconData = MetricIcon.getData;
 
@@ -28,6 +29,7 @@ class Metric {
     pastValues= [0.0,1.0,2.0,3.0,4.0,5.0];
     gain=0;
     gainPercentage=0;
+    tracked=false;
   }
 
   update() async {

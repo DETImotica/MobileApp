@@ -61,7 +61,7 @@ class _RoomListState extends State<RoomListPage> {
           ),
         );
       }
-       else {
+      else {
         _searchIcon = new Icon(Icons.search);
         _searchBarTitle = new Text("Search...");
         _roomsFiltered = _rooms;
@@ -219,6 +219,14 @@ class _RoomListState extends State<RoomListPage> {
     return list;
   }
 
+  void collapseAll() {
+    setState(() {
+      for (RoomBr room in _rooms) {
+        room.isExpanded=false;
+      }
+    });
+  }
+
   Widget _buildRoomList(BuildContext context, List<RoomBr> rList) {
     return ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
@@ -294,6 +302,7 @@ class _RoomListState extends State<RoomListPage> {
                         icon: Image.asset("assets/images/details.png"),
                         iconSize: 48,
                         onPressed: () {
+                          collapseAll();
                           Navigator.push(context,MaterialPageRoute(builder: (context) => RoomPage(room.roomInfo())));
                         },
                       )
