@@ -18,10 +18,11 @@ class RoomPage extends StatefulWidget {
   State<StatefulWidget> createState() => _RoomPageState(room);
 }
 
-class _RoomPageState extends State<RoomPage> {
+class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
   Room room;
   Future<Room> info;
   Timer timer;
+  bool active;
 
   _trackedFromJson() async {
     String data;
@@ -81,15 +82,40 @@ class _RoomPageState extends State<RoomPage> {
     _trackedFromJson();
     info=room.update();
     timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState(() {
-      room.update();
-      if (statusCode==401) Navigator.pushNamedAndRemoveUntil(context, "/err/401", ModalRoute.withName('/'));
+      if (active) {
+        room.update();
+        if (statusCode == 401) Navigator.pushNamedAndRemoveUntil(context, "/err/401", ModalRoute.withName('/'));
+      }
     }));
+    active=true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     timer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch(state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        active=false;
+      break;
+      case AppLifecycleState.resumed:
+        active=true;
+      break;
+    }
   }
 
   void _logout() async {

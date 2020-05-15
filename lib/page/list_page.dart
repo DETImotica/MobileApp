@@ -28,6 +28,7 @@ class _RoomListState extends State<RoomListPage> {
       else {
         setState(() {
           _searchText = _filter.text;
+          _roomsFiltered = _rooms;
         });
       }
     });
@@ -47,24 +48,24 @@ class _RoomListState extends State<RoomListPage> {
   List<RoomBr> _rooms=List();
   List<RoomBr> _roomsFiltered=List();
   Icon _searchIcon = new Icon(Icons.search);
-  Widget _searchBarTitle = new Text("Salas Monitorizadas");
+  Widget _searchBarTitle = new Text("Search...");
 
   void _searchPressed() {
     if (ready) setState(() {
       if (_searchIcon.icon == Icons.search) {
+        for (RoomBr room in _rooms) room.isExpanded=false;
         _searchIcon = new Icon(Icons.close);
         _searchBarTitle = new TextField(
           controller: _filter,
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search),
-              hintText: '<dep>.<piso>.<sala>'
+              hintText: '<nome>'
           ),
         );
       }
       else {
         _searchIcon = new Icon(Icons.search);
         _searchBarTitle = new Text("Search...");
-        _roomsFiltered = _rooms;
         _filter.clear();
       }
     });
@@ -221,9 +222,7 @@ class _RoomListState extends State<RoomListPage> {
 
   void collapseAll() {
     setState(() {
-      for (RoomBr room in _rooms) {
-        room.isExpanded=false;
-      }
+      for (RoomBr room in _rooms) room.isExpanded=false;
     });
   }
 

@@ -19,7 +19,7 @@ class RoomBr {
     occupancy=-1;
   }
 
-  RoomBr.id(String id, this.description) {
+  RoomBr.id(String id, [this.description]) {
     var split=id.split(".");
     name=id;
     if (split.length==3) {
@@ -43,5 +43,5 @@ class RoomBr {
     return Room(sensors,dept,floor,num);
   }
 
-  String getName() => "$dept.$floor.$num";
+  String getName() => name;
 }
