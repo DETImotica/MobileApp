@@ -27,7 +27,7 @@ Future<String> apiGet(String url) async {
   String ret="${response.statusCode}";
   statusCode=response.statusCode;
   if (response.statusCode>=200 && response.statusCode<400) ret=responseBody;
-  else print("Communications Error: ${response.statusCode}");
+  else print("$url-Communications Error: ${response.statusCode}");
 
   return ret;
 }

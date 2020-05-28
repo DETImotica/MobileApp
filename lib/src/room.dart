@@ -43,6 +43,8 @@ class Room {
 
   dynamic getGainPercentage (String metric) => _metrics[metric].gainPercentage;
 
+  bool getActive(String metric) => _metrics[metric].active;
+
   int getNumSensors() => _metrics.length;
 
   Iterable<String> getMetrics() => _metrics.keys;

@@ -18,6 +18,8 @@ class Metric {
   dynamic gainPercentage;
   bool tracked;
 
+  bool active;
+
   Metric(this.id,this.type,[this.description,this.unit]) {
     value=0;
     date= "Invalid Date";
@@ -28,6 +30,7 @@ class Metric {
     gain=0;
     gainPercentage=0;
     tracked=false;
+    active=true;
   }
 
   update() async {
@@ -39,9 +42,14 @@ class Metric {
     var dict;
     try {
       dict=jsonDecode(responseBody);
+      if ((dict as Map).length==0) {
+        active=false;
+        return;
+      }
     }
     on FormatException {
       print("Could not decode response: ${(responseBody[0]=="<"?"(HTML page)":responseBody)}");
+      active=false;
       return;
     }
     var data= [];
@@ -56,6 +64,8 @@ class Metric {
       time="${dt.hour}:${dt.minute}:${dt.second}";
       (data.length > 1) ? gain= dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"]: gain = 0;
       (data.length > 1 && dict["values"][data.length-2]["value"].toDouble()!=0) ? gainPercentage= (dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"])/dict["values"][data.length-2]["value"].toDouble(): gainPercentage = 0;
+      active=true;
     }
+    else active=false;
   }
 }

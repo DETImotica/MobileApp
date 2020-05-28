@@ -198,39 +198,40 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
                   child: Stack(
                     children: <Widget>[
                       Padding(
-                          padding: const EdgeInsets.only(left: 10, top: 5),
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(room.isTracked(metric)?Icons.notifications:Icons.notifications_none),
-                                    color: (room.isTracked(metric)?Colors.blue:Colors.grey),
-                                    onPressed: () {
-                                      setState(() {
-                                        _toggleTracked(metric);
-                                      });
-                                    },
-                                  ),
-                                  _metricIcon(metric),
-                                  SizedBox(width: 5),
-                                  _metricNameSymbol(metric),
-                                  Spacer(),
-                                  _sensorChange(metric),
-                                  SizedBox(width: 10),
-                                  _changeIcon(metric),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Expanded(child:_sensorValueData(metric)),
-                                  room.getGauge(metric, room.getValue(metric)),
-                                  _changeGraph(metric)
-                                ].where((Object o)=>o!=null).toList(),
-                              )
-                            ],
-                          ))
+                        padding: const EdgeInsets.only(left: 10, top: 5),
+                        child: (room.getActive(metric))?Column(
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                IconButton(
+                                  icon: Icon(room.isTracked(metric)?Icons.notifications:Icons.notifications_off),
+                                  color: (room.isTracked(metric)?Colors.blue:Colors.grey),
+                                  onPressed: () {
+                                    setState(() {
+                                      _toggleTracked(metric);
+                                    });
+                                  },
+                                ),
+                                _metricIcon(metric),
+                                SizedBox(width: 5),
+                                _metricNameSymbol(metric),
+                                Spacer(),
+                                _sensorChange(metric),
+                                SizedBox(width: 10),
+                                _changeIcon(metric),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Expanded(child:_sensorValueData(metric)),
+                                room.getGauge(metric, room.getValue(metric)),
+                                _changeGraph(metric)
+                              ].where((Object o)=>o!=null).toList(),
+                            )
+                          ],
+                        ):getInactiveSensor(metric)
+                      )
                     ],
                   ),
                 )
@@ -242,6 +243,43 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
     }
 
     return sensors;
+  }
+
+  Widget getInactiveSensor(String metric) {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+          IconButton(
+            icon: Icon(room.isTracked(metric)?Icons.notifications_none:Icons.notifications_off),
+            color: Colors.grey,
+            onPressed: () {
+              setState(() {
+                _toggleTracked(metric);
+              });
+            },
+          ),
+          _metricIcon(metric),
+          SizedBox(width: 5),
+          _metricNameSymbol(metric),
+          ],
+        ),
+        Spacer(),
+        Padding(
+          padding: EdgeInsets.only(left: 10, right: 10, bottom: 30),
+          child: Text(
+            "Dados indisponíveis",
+            style: TextStyle(
+              color: Colors.grey,
+              fontStyle: FontStyle.italic,
+              fontSize: 25,
+              fontWeight: FontWeight.bold
+            ),
+            textAlign: TextAlign.justify,
+          ),
+        )
+      ],
+    );
   }
 
   Widget _metricIcon(metric) {

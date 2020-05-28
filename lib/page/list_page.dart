@@ -212,8 +212,8 @@ class _RoomListState extends State<RoomListPage> {
           print(exc);
         }
       }
-      //TODO fetch occupants from sensor
-      room.occupancy=Random().nextInt(3);
+      // NOT IMPLEMENTED
+      //room.occupancy=Random().nextInt(3);
     }
     _rooms=list;
     _roomsFiltered=_rooms;
@@ -256,7 +256,7 @@ class _RoomListState extends State<RoomListPage> {
                   ),
                   Expanded(
                     child: Text(
-                      "${room.occupancy} pessoas",
+                      "${room.sensors.length} sensores",
                       style: TextStyle(color: Colors.grey, fontSize: 24),
                       textAlign: TextAlign.right,
                     )
@@ -272,7 +272,7 @@ class _RoomListState extends State<RoomListPage> {
                 child: Padding(
                   padding: EdgeInsets.all(8),
                   child: Text(
-                    "Número estimado de ocupantes: ${room.occupancy}",
+                    "Número de sensores instalados: ${room.sensors.length}",
                     style: TextStyle(fontSize: 24),
                     textAlign: TextAlign.left
                   ),
@@ -320,7 +320,10 @@ class _RoomListState extends State<RoomListPage> {
   List<Widget> _getRoomIcons(RoomBr room) {
     List<Widget> list=List();
     for (SensorBr sensor in room.sensors.values) {
-      list.add(Image.asset(MetricIcon.getIcon(sensor.type),width: 48,height: 48));
+      list.add(Tooltip(
+        child: Image.asset(MetricIcon.getIcon(sensor.type),width: 48,height: 48),
+        message: sensor.type,
+      ));
     }
     return list;
   }
