@@ -40,7 +40,6 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
       print("WARING: Corrupted file!");
       return;
     }
-    print(dict);
     room.initTracked(dict);
   }
   _toggleTracked(String metric) async {
@@ -75,13 +74,12 @@ class _RoomPageState extends State<RoomPage> with WidgetsBindingObserver {
       print("WARING: Corrupted file!");
       return;
     }
-    print(dict);
   }
 
   _RoomPageState(this.room) {
     _trackedFromJson();
     info=room.update();
-    timer=Timer.periodic(Duration(seconds: 2),(Timer t)=>setState(() {
+    timer=Timer.periodic(Duration(seconds: 6),(Timer t)=>setState(() {
       if (active) {
         room.update();
         if (statusCode == 401) Navigator.pushNamedAndRemoveUntil(context, "/err/401", ModalRoute.withName('/'));

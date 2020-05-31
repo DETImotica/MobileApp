@@ -33,7 +33,7 @@ class Room {
 
   String getIconPath(String metric) => _metrics[metric].iconPath;
 
-  Image getGauge(String metric, dynamic value) => MetricRanges.getGauge(metric,value);
+  Image getGauge(String metric, dynamic value) => MetricRanges.getGauge(metric,_metrics[metric].unit,value);
 
   Color getColor (String metric) => _metrics[metric].color;
 

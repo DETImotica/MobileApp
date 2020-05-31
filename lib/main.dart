@@ -4,10 +4,6 @@ import 'package:deti_motica_app/push_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Future<dynamic> onBackgroundMessageHandler(Map<String, dynamic> message) async {
-  print(message);
-}
-
 void main() => runApp(DETIMotica());
 
 class DETIMotica extends StatelessWidget {
@@ -102,7 +98,23 @@ class Err401 extends StatelessWidget {
               "Infelizmente não tem permissões para aceder a esta informação",
               style: TextStyle(fontSize: 32),
               textAlign: TextAlign.center,
-            )
+            ),
+            RaisedButton(
+              onPressed: () => Navigator.pushNamed(context,"/login"),
+              child: Text(
+                "LOGIN",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+              color: Colors.blue,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)
+              ),
+            ),
           ],
         )
       )

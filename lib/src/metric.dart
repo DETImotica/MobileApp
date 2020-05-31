@@ -49,21 +49,28 @@ class Metric {
     }
     on FormatException {
       print("Could not decode response: ${(responseBody[0]=="<"?"(HTML page)":responseBody)}");
+      if (responseBody[0]=="<") active=false;
+      return;
+    }
+    on Exception {
+      print("Misc Error");
       active=false;
       return;
     }
+
     var data= [];
     for (var tuple in dict["values"]){
       data.add(tuple["value"].toDouble());
     }
     if (data.length > 0){
+      var lastVal=value;
       pastValues= data;
       value=dict["values"][data.length-1]["value"];
       DateTime dt=DateTime.parse(dict["values"][data.length-1]["time"]).toLocal();
       date="${dt.year}-${dt.month}-${dt.day}";
       time="${dt.hour}:${dt.minute}:${dt.second}";
-      (data.length > 1) ? gain= dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"]: gain = 0;
-      (data.length > 1 && dict["values"][data.length-2]["value"].toDouble()!=0) ? gainPercentage= (dict["values"][data.length-1]["value"]- dict["values"][data.length-2]["value"])/dict["values"][data.length-2]["value"].toDouble(): gainPercentage = 0;
+      (data.length > 1) ? gain= value-lastVal: gain = 0;
+      (data.length > 1 && lastVal.toDouble()!=0) ? gainPercentage= (value-lastVal)/lastVal.toDouble(): gainPercentage = 0;
       active=true;
     }
     else active=false;

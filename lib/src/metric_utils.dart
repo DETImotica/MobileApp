@@ -27,15 +27,15 @@ class MetricIcon{
 class MetricRanges {
 
   static final _valueRanges = {
-    'Luminosidade': {'min': 100, 'midlow': 200, 'midhigh': 500},
-    'Temperatura': {'min': 12, 'midlow': 18, 'midhigh': 24, 'max': 30},
-    'Som': {'midlow': 0, 'midhigh': 65, 'max': 100},
-    'Humidade': {'midlow': 30, 'midhigh': 50, 'max': 65},
+    'Luminosidade': {'min': 100, 'midlow': 200, 'midhigh': 500, 'measure': 'Lux'},
+    'Temperatura': {'min': 12, 'midlow': 18, 'midhigh': 24, 'max': 30, 'measure': 'ºC'},
+    'Som': {'midlow': 0, 'midhigh': 65, 'max': 100, 'measure': 'Db'},
+    'Humidade': {'midlow': 30, 'midhigh': 50, 'max': 65, 'measure': 'RH'},
     'Dióxido de Carbono': {'midlow': 100, 'midhigh': 1000, 'max': 2000},
-    'Qualidade do Ar': {'midlow': 0, 'midhigh': 100, 'max': 200},
+    'Qualidade do Ar': {'midlow': 0, 'midhigh': 100, 'max': 200, 'measure': 'IAQ'},
   };
 
-  static Image getGauge(String metric, dynamic value) {
+  static Image getGauge(String metric, String measure, dynamic value) {
     double val;
     if (value is num) val=value.toDouble();
     else return null;
@@ -43,7 +43,8 @@ class MetricRanges {
 
     String path;
     var dict=_valueRanges[metric];
-    if (dict.containsKey('min') && val<dict['min']) path="assets/images/lowest.png";
+    if (dict.containsKey('measure') && dict['measure']!=measure) return null;
+    else if (dict.containsKey('min') && val<dict['min']) path="assets/images/lowest.png";
     else if (dict.containsKey('midlow') && val<dict['midlow']) path="assets/images/low.png";
     else if (dict.containsKey('midhigh') && val<dict['midhigh']) path="assets/images/good.png";
     else if (dict.containsKey('max')) {
