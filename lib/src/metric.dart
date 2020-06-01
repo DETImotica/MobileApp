@@ -49,7 +49,7 @@ class Metric {
     }
     on FormatException {
       print("Could not decode response: ${(responseBody[0]=="<"?"(HTML page)":responseBody)}");
-      if (responseBody[0]=="<") active=false;
+      if (responseBody[0]!="<") active=false;
       return;
     }
     on Exception {
